@@ -1,29 +1,27 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+import 'package:stupid_ratio/injection.dart';
+import 'package:stupid_ratio/presentation/core/app_widget.dart';
 
-void main() async {
+import 'presentation/core/app_bloc_observer.dart';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  configureInjection(Environment.prod);
   await Firebase.initializeApp();
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Stupid Ratio',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Stupid Ratio',
-          ),
-        ),
-      ),
-    );
-  }
+  BlocOverrides.runZoned(
+    () {
+      runZonedGuarded(
+        () => runApp(AppWidget()),
+        (error, stackTrace) => log(error.toString(), stackTrace: stackTrace),
+      );
+    },
+    blocObserver: AppBlocObserver(),
+    //eventTransformer: customEventTransformer(),
+  );
 }

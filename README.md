@@ -1,6 +1,6 @@
 # stupid_ratio
 
-A new Flutter project.
+A Multiplayer Q&A Session game that shows a stupid ratio as the result.
 
 ## Getting Started
 
